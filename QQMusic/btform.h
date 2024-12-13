@@ -19,8 +19,7 @@ public:
     void seticon(const QString &btIcon,const QString &content,int pageId);
     int getPageId()const;
     void clearBackground();
-    void showAnimal();
-
+    void showAnimal(bool isShow);
 signals:
     void btClick(int id);
 

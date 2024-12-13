@@ -3,6 +3,7 @@
 #include <QVector>
 #include <QUrl>
 #include "music.h"
+#include <QSet>
 typedef typename QVector<Music>::iterator iterator;
 class MusicList
 {
@@ -12,8 +13,11 @@ public:
     iterator findMusicByMusicId(const QString &musicId);
     iterator begin();
     iterator end();
+    void writeToDB();
+    void readFromDB();
 private:
     QVector<Music> musicList;
+    QSet<QString> musicPaths;
 };
 
 #endif // MUSICLIST_H

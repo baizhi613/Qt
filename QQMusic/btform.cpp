@@ -65,9 +65,16 @@ void BtForm::clearBackground()
     ui->btStyle->setStyleSheet("#btStyle:hover{ background:#D8D8D8;} QLabel{background-color : transparent;}");
 }
 
-void BtForm::showAnimal()
+void BtForm::showAnimal(bool isShow)
 {
-    ui->lineBox->show();
+    if(isShow)
+    {
+        ui->lineBox->show();
+    }
+    else
+    {
+        ui->lineBox->hide();
+    }
 }
 
 void BtForm::mousePressEvent(QMouseEvent *event)

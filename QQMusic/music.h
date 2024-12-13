@@ -23,6 +23,8 @@ public:
     qint64 getDuration();
     QUrl getMusicUrl();
     QString getMusicId();
+    QString getLrcFilePath() const;
+    void insertMusicToDB();
 private:
     void parseMediaMetaData();
 private:

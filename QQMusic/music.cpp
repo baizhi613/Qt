@@ -2,6 +2,8 @@
 #include <QUuid>
 #include <QCoreApplication>
 #include <QMediaPlayer>
+#include <QSqlQuery>
+#include <QSqlError>
 Music::Music()
     : isLike(false)
     , isHistory(false)
@@ -79,6 +81,62 @@ QString Music::getMusicId()
     return musicId;
 }
 
+QString Music::getLrcFilePath() const
+{
+    QString path=musicUrl.toLocalFile();
+    path.replace(".mp3",".lrc");
+    path.replace(".flac",".lrc");
+    path.replace(".mpga",".lrc");
+    return path;
+}
+
+void Music::insertMusicToDB()
+{
+    QSqlQuery query;
+    query.prepare("SELECT EXISTS (SELECT 1 FROM MusicInfo WHERE musicId = ?)");
+    query.addBindValue(musicId);
+    if(!query.exec())
+    {
+        qDebug()<<"查询失败: "<<query.lastError().text();
+        return;
+    }
+    if(query.next())
+    {
+        bool isExists=query.value(0).toBool();
+        if(isExists)
+        {
+            query.prepare("UPDATE MusicInfo SET isLike = ?, isHistory = ? WHERE musicId = ?");
+            query.addBindValue(isLike? 1 : 0);
+            query.addBindValue(isHistory? 1 : 0);
+            query.addBindValue(musicId);
+            if(!query.exec())
+            {
+                qDebug()<<"更新失败: "<<query.lastError().text();
+            }
+            qDebug()<<"更新music信息: "<<musicName<<" "<<musicId;
+        }
+        else
+        {
+            query.prepare(("INSERT INTO MusicInfo(musicId, musicName,musicSinger, albumName, musicUrl,\
+            duration, isLike, isHistory)\
+            VALUES(?,?,?,?,?,?,?,?)"));
+            query.addBindValue(musicId);
+            query.addBindValue(musicName);
+            query.addBindValue(singerName);
+            query.addBindValue(albumName);
+            query.addBindValue(musicUrl.toLocalFile());
+            query.addBindValue(duration);
+            query.addBindValue(isLike ? 1 : 0);
+            query.addBindValue(isHistory? 1 : 0);
+            if(!query.exec())
+            {
+                qDebug()<<"插入失败: "<<query.lastError().text();
+                return;
+            }
+            qDebug()<<"插入music信息: "<<musicName<<" "<<musicId;
+        }
+    }
+}
 void Music::parseMediaMetaData()
 {
     QMediaPlayer player;
@@ -93,13 +151,29 @@ void Music::parseMediaMetaData()
         singerName = player.metaData("Author").toString();
         albumName = player.metaData("AlbumTitle").toString();
         duration = player.duration();
+        QString fileName=musicUrl.fileName();
+        int index=fileName.indexOf('-');
         if(musicName.isEmpty())
         {
-            musicName = "歌曲未知";
+            if(index!=-1)
+            {
+                musicName = fileName.mid(0, index).trimmed();
+            }
+            else
+            {
+                musicName = fileName.mid(0, fileName.indexOf('.')).trimmed();
+            }
         }
         if(singerName.isEmpty())
         {
-            singerName = "歌手未知";
+            if(index!=-1)
+            {
+                singerName = fileName.mid(index+1, fileName.indexOf('.')-index-1).trimmed();
+            }
+            else
+            {
+                singerName = "歌手未知";
+            }
         }
         if(albumName.isEmpty())
         {

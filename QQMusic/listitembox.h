@@ -14,15 +14,18 @@ class ListItemBox : public QWidget
 public:
     explicit ListItemBox(QWidget *parent = nullptr);
     ~ListItemBox();
-protected:
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
     void setMusicName(const QString& name);
     void setSinger(const QString& singer);
     void setAlbumName(const QString& albumName);
     void setLikeIcon(bool like);
+    void onLikeBtnClicked();
+signals:
+    void setIsLike(bool);
 private:
     Ui::ListItemBox *ui;
+    bool isLike;
 };
 
 #endif // LISTITEMBOX_H

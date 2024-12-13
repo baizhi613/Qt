@@ -99,7 +99,7 @@
          </size>
         </property>
         <property name="text">
-         <string>可可托海的牧羊人</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -206,7 +206,7 @@ color:#1ECD96;
       <item>
        <widget class="QLabel" name="musicSingerLabel">
         <property name="text">
-         <string>王琪</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -234,7 +234,7 @@ color:#1ECD96;
       <item>
        <widget class="QLabel" name="albumNameLabel">
         <property name="text">
-         <string>可可托海的牧羊人</string>
+         <string/>
         </property>
        </widget>
       </item>
